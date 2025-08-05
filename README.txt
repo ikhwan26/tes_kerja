@@ -1,0 +1,44 @@
+this is user behaviour analysis that concise of user_data, transactions_data, and cards_data
+the final variable are as following (see queries ch 1 "importing and cleaning" for the details about changing the variable types from raw to final):
+card_data
+	id:int
+	client_id:int
+	card_brand:varchar
+	card_type:varchar
+	card_number:bigint
+	expires:date
+	cvv:int
+	has_chip:varchar
+	num_cards:int
+	credit_limit:int
+	acct_open_date:date
+	year_pin_last_change:int
+	card_on_dark_web:varchar
+transaction_data
+	id:int
+	date:timestamp
+	client_id:int
+	card_id:int
+	amount:float
+	use_chip:varchar
+	merchant_id:int
+	merchant_city:varchar
+	mercant_state:varchar
+	zip:float
+	mcc:int
+	error:varchar
+users_data
+	id:int
+	current_age:int
+	retirement_age:int
+	birth_year:int
+	birth_month:int
+	gender:varchar
+	address:varchar
+	latitude:float
+	longitude:float
+	per_capita_income:int
+	yearly_income:int
+	total_debt:int
+	credit_score:int
+	num_credit_cards:int

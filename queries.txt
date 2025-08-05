@@ -1,0 +1,90 @@
+1.	Importing and cleaning
+CREATE TABLE cards_data (
+    id INT,
+    client_id INT,
+    card_brand VARCHAR(255),
+    card_type VARCHAR(255),
+    card_number BIGINT,
+	expires VARCHAR(255),
+	cvv INT,
+	has_chip VARCHAR (255),
+	num_cards INT,
+	credit_limit VARCHAR (255),
+	acct_open_date VARCHAR (255),
+	year_pin_last_changed INT,
+	card_on_dark_web VARCHAR (255)
+	);
+#data inputted with postgres
+CREATE TABLE transaction_data (
+    id INT,
+    date TIMESTAMP,
+    client_id INT,
+    card_id INT,
+    amount VARCHAR (255),
+	use_chip VARCHAR (255),
+	merchant_id INT,
+	merchant_city VARCHAR (255),
+	merchant_state VARCHAR (255),
+	zip FLOAT,
+	mcc INT,
+	errors VARCHAR(255)
+	);
+#data inputted with postgres
+
+CREATE TABLE users_data (
+    id INT,
+    current_age INT,
+    retirement_age INT,
+    birth_year INT,
+    birth_month INT,
+	gender VARCHAR (255),
+	address VARCHAR (255),
+	latitude FLOAT,
+	longitude FLOAT,
+	per_capita_income VARCHAR (255),
+	yearly_income VARCHAR (255),
+	total_debt VARCHAR(255),
+	credit_score INT,
+	num_credit_cards INT
+	);
+#data inputted with postgres
+UPDATE cards_data SET expires =  CONCAT('01/',expires);
+UPDATE cards_data SET acct_open_date =  CONCAT('01/',acct_open_date);
+ALTER TABLE cards_data 
+    ALTER COLUMN expires TYPE DATE USING to_date(expires, 'DD/MM/YYYY');
+ALTER TABLE cards_data 
+    ALTER COLUMN acct_open_date TYPE DATE USING to_date(acct_open_date, 'DD/MM/YYYY');
+UPDATE cards_data SET credit_limit = RIGHT(credit_limit, LENGTH(credit_limit) - 1);
+ALTER TABLE cards_data 
+    ALTER COLUMN credit_limit TYPE INT USING credit_limit::integer;
+UPDATE transaction_data SET amount = RIGHT(amount, LENGTH(amount) - 1);
+ALTER TABLE transaction_data 
+    ALTER COLUMN amount TYPE FLOAT USING amount::FLOAT;
+UPDATE users_data SET per_capita_income = RIGHT(per_capita_income, LENGTH(per_capita_income) - 1);;
+UPDATE users_data SET yearly_income = RIGHT(yearly_income, LENGTH(yearly_income) - 1);
+ALTER TABLE users_data 
+    ALTER COLUMN per_capita_income TYPE INT USING per_capita_income::integer;
+ALTER TABLE users_data 
+    ALTER COLUMN yearly_income TYPE INT USING yearly_income::integer;
+ALTER TABLE users_data 
+    ALTER COLUMN total_debt TYPE INT USING total_debt::integer;
+2. 	Exploration
+CREATE TABLE total_transaction_day AS
+SELECT
+  EXTRACT(HOUR FROM date) AS hour,
+  COUNT(*) AS total,
+  SUM(amount) AS amount
+FROM transaction_data
+GROUP BY hour
+ORDER BY hour;
+CREATE TABLE total_transaction_month AS
+SELECT
+  EXTRACT(MONTH FROM date) AS MONTH,
+  EXTRACT(YEAR FROM date) AS YEAR,
+  COUNT (*) AS total,
+  SUM (amount) AS amount
+FROM transaction_data
+GROUP BY MONTH,YEAR
+ORDER BY YEAR,MONTH;
+SELECT card_brand, COUNT(*) FROM cards_data GROUP BY card_brand;
+SELECT credit_score, SUM(CAST (total_debt AS FLOAT)/CAST(yearly_income AS FLOAT)) FROM users_data GROUP BY credit_score ORDER BY credit_score;
